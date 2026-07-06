@@ -1,0 +1,7 @@
+#common
+.vs/
+.git
+
+#PaperZD
+Binaries/
+Intermediate/
