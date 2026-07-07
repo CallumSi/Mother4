@@ -1,0 +1,46 @@
+# Onett - text map for Mother4
+# ------------------------------------------------------------------
+# Edit this file and re-run the baker to re-paint the tile map.
+# No recompile is needed to change the map or the legend.
+#
+# [legend] : one line per symbol ->  <symbol> = <tileIndex> [ @ <layer> ]
+#            <tileIndex> is the tile's index in tilemap_TileSet
+#            (left-to-right, top-to-bottom, starting at 0).
+#            "@ <layer>" is optional (default layer 0). Use a higher layer
+#            for things that should draw on top of the ground, e.g. trees.
+# [map]    : one character per tile. A space leaves a cell empty.
+#
+# NOTE: the indices below are PLACEHOLDERS. After the first bake we render the
+# tile set with its indices and correct these to the real grass/tree/etc tiles.
+# ------------------------------------------------------------------
+
+[legend]
+. = 0        # grass (ground fill)
+T = 1 @ 1    # tree      (drawn on the upper layer)
+p = 2        # path / dirt
+w = 3        # water
+f = 4 @ 1    # flowers   (upper layer)
+h = 5        # house wall
+r = 6        # roof
+
+[map]
+TTTTTTTTTTTTTTTTTTTT
+T..................T
+T...ff.......rr....T
+T...ff.......hh....T
+T............hh....T
+T....ppppppp.......T
+T....p.....p.......T
+T....p.....p...TT..T
+T....p.....p...TT..T
+T....ppppppp.......T
+T..................T
+T....wwww..........T
+T...wwwwww.....ff..T
+T...wwwwww.....ff..T
+T....wwww..........T
+T..................T
+T..TT......pppppp..T
+T..TT......p....p..T
+T..........p....p..T
+TTTTTTTTTTTTTTTTTTTT
