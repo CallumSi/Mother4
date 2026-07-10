@@ -28,6 +28,11 @@ class UPaperTileSet;
  *
  * The map/legend are data, so re-painting only needs an edit to the text file
  * plus a re-run of the baker - no recompile.
+ *
+ * bMirrorX: this level's tile map actor renders horizontally mirrored in-game,
+ * so pass true to pre-mirror the bake (place each tile at the mirrored column and
+ * set Paper2D's horizontal-flip flag) - the two mirrors cancel and the map reads
+ * correctly in the running game.
  */
 UCLASS()
 class MYPROJECT_API UTileMapImporterLibrary : public UBlueprintFunctionLibrary
@@ -37,11 +42,11 @@ class MYPROJECT_API UTileMapImporterLibrary : public UBlueprintFunctionLibrary
 public:
 	/** Parses MapText and writes the resulting tiles into TileMap. Marks the tile map's package dirty. */
 	UFUNCTION(BlueprintCallable, Category = "Tile Map Importer")
-	static bool BakeTileMapFromString(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& MapText, FString& OutError);
+	static bool BakeTileMapFromString(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& MapText, bool bMirrorX, FString& OutError);
 
 	/** Loads a .map text file (path resolved against the project & Content dirs) and bakes it into TileMap. */
 	UFUNCTION(BlueprintCallable, Category = "Tile Map Importer")
-	static bool BakeTileMapFromFile(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& FilePath, FString& OutError);
+	static bool BakeTileMapFromFile(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& FilePath, bool bMirrorX, FString& OutError);
 
 	/** Resolves a possibly-relative map path against the project Content dir, then the project dir. */
 	static FString ResolveMapPath(const FString& InPath);

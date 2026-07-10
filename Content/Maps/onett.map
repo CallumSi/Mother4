@@ -1,46 +1,52 @@
-# Onett - text map for Mother4
-# ------------------------------------------------------------------
-# Edit this file and re-run the baker to re-paint the tile map.
-# No recompile is needed to change the map or the legend.
-#
-# [legend] : one line per symbol ->  <symbol> = <tileIndex> [ @ <layer> ]
-#            <tileIndex> is the tile's index in tilemap_TileSet
-#            (left-to-right, top-to-bottom, starting at 0).
-#            "@ <layer>" is optional (default layer 0). Use a higher layer
-#            for things that should draw on top of the ground, e.g. trees.
-# [map]    : one character per tile. A space leaves a cell empty.
-#
-# NOTE: the indices below are PLACEHOLDERS. After the first bake we render the
-# tile set with its indices and correct these to the real grass/tree/etc tiles.
-# ------------------------------------------------------------------
-
+# Onett - Mother4  (30x24, built from OnettTileset_Reference.md)
 [legend]
-. = 0        # grass (ground fill)
-T = 1 @ 1    # tree      (drawn on the upper layer)
-p = 2        # path / dirt
-w = 3        # water
-f = 4 @ 1    # flowers   (upper layer)
-h = 5        # house wall
-r = 6        # roof
+. = 4        # grass
+T = 183      # tree (border)
+r = 289      # road / pavement
+w = 663      # water
+f = 37       # flowers
+m = 310      # mailbox
+s = 312      # stop sign
+x = 316      # manhole (left)
+y = 317      # manhole (mid)
+z = 318      # manhole (right)
+1 = 386      # house roof L
+2 = 388      # house roof M
+3 = 390      # house roof R
+4 = 391      # house wall L (window)
+5 = 432      # house door
+6 = 392      # house wall R (window)
+a = 457      # white bldg 1
+b = 458      # white bldg 2
+c = 459      # white bldg 3
+d = 460      # white bldg 4
+e = 461      # white bldg 5
+g = 462      # white bldg 6
+O = 362      # ONETT sign L
+N = 363      # ONETT sign R
 
 [map]
-TTTTTTTTTTTTTTTTTTTT
-T..................T
-T...ff.......rr....T
-T...ff.......hh....T
-T............hh....T
-T....ppppppp.......T
-T....p.....p.......T
-T....p.....p...TT..T
-T....p.....p...TT..T
-T....ppppppp.......T
-T..................T
-T....wwww..........T
-T...wwwwww.....ff..T
-T...wwwwww.....ff..T
-T....wwww..........T
-T..................T
-T..TT......pppppp..T
-T..TT......p....p..T
-T..........p....p..T
-TTTTTTTTTTTTTTTTTTTT
+TTTTTTTTTTTTTTrrTTTTTTTTTTTTTT
+T.............rr.............T
+T.............ON.............T
+T..ffff.......rr..123...123..T
+T..ffff.......rr.m456..m456..T
+T..ffff.......rr.............T
+T.............rr.............T
+T.............rr.............T
+T.............rr.............T
+T.............rr.............T
+T..abcdeg....srrs............T
+rrrrrrxyzrrrrrrrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+T............srrs............T
+T.............rr........ffff.T
+T..123...123..rr.......fwwww.T
+T..456..m456..rr...m123fwwww.T
+T.............rr....456fwwww.T
+T........ffff.rr.......fwwww.T
+T........ffff.rr........ffff.T
+T........ffff.rr.............T
+T.............rr.............T
+T.............rr.............T
+TTTTTTTTTTTTTTrrTTTTTTTTTTTTTT

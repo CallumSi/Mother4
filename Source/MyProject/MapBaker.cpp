@@ -21,7 +21,7 @@ void AMapBaker::GenerateFromFile()
 	}
 
 	FString Error;
-	const bool bOk = UTileMapImporterLibrary::BakeTileMapFromFile(TargetTileMap, TileSet, MapFilePath, Error);
+	const bool bOk = UTileMapImporterLibrary::BakeTileMapFromFile(TargetTileMap, TileSet, MapFilePath, bMirrorX, Error);
 	if (bOk)
 	{
 		UE_LOG(LogMapBaker, Display,

@@ -37,6 +37,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Map Baker")
 	FString MapFilePath = TEXT("Maps/onett.map");
 
+	/** This level's tile map renders horizontally mirrored in-game; leave ON so the bake is pre-mirrored to compensate. */
+	UPROPERTY(EditAnywhere, Category = "Map Baker")
+	bool bMirrorX = true;
+
 	/** Reads MapFilePath and bakes it into TargetTileMap. Remember to save the asset afterwards. */
 	UFUNCTION(CallInEditor, Category = "Map Baker")
 	void GenerateFromFile();

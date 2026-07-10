@@ -40,8 +40,10 @@ int32 UBakeTileMapCommandlet::Main(const FString& Params)
 		UE_LOG(LogBakeTileMap, Warning, TEXT("Could not load tile set: %s (baking without one)"), *TileSetPath);
 	}
 
+	const bool bMirrorX = !Switches.Contains(TEXT("nomirror"));
+
 	FString Error;
-	if (!UTileMapImporterLibrary::BakeTileMapFromFile(TileMap, TileSet, MapPath, Error))
+	if (!UTileMapImporterLibrary::BakeTileMapFromFile(TileMap, TileSet, MapPath, bMirrorX, Error))
 	{
 		UE_LOG(LogBakeTileMap, Error, TEXT("Bake failed: %s"), *Error);
 		return 1;

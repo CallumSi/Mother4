@@ -94,7 +94,7 @@ namespace
 		}
 	}
 
-	bool ApplyToTileMap(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FParsedMap& Parsed, FString& OutError)
+	bool ApplyToTileMap(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FParsedMap& Parsed, bool bMirrorX, FString& OutError)
 	{
 		const int32 Height = Parsed.Rows.Num();
 		int32 Width = 0;
@@ -181,10 +181,19 @@ namespace
 					continue;
 				}
 
+				// The level's tile map actor displays mirrored in-game; when bMirrorX is set
+				// we place at the mirrored column and horizontally flip the tile art so the
+				// two mirrors cancel and the map reads correctly in the running game.
+				const int32 DestX = bMirrorX ? (Width - 1 - X) : X;
+
 				FPaperTileInfo Info;
 				Info.TileSet = TileSet;
 				Info.PackedTileIndex = *IndexPtr;
-				TileMap->TileLayers[Layer]->SetCell(X, Y, Info);
+				if (bMirrorX)
+				{
+					Info.PackedTileIndex |= static_cast<int32>(EPaperTileFlags::FlipHorizontal);
+				}
+				TileMap->TileLayers[Layer]->SetCell(DestX, Y, Info);
 				++TilesPlaced;
 			}
 		}
@@ -212,7 +221,7 @@ namespace
 	}
 }
 
-bool UTileMapImporterLibrary::BakeTileMapFromString(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& MapText, FString& OutError)
+bool UTileMapImporterLibrary::BakeTileMapFromString(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& MapText, bool bMirrorX, FString& OutError)
 {
 	if (!TileMap)
 	{
@@ -234,10 +243,10 @@ bool UTileMapImporterLibrary::BakeTileMapFromString(UPaperTileMap* TileMap, UPap
 		return false;
 	}
 
-	return ApplyToTileMap(TileMap, TileSet, Parsed, OutError);
+	return ApplyToTileMap(TileMap, TileSet, Parsed, bMirrorX, OutError);
 }
 
-bool UTileMapImporterLibrary::BakeTileMapFromFile(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& FilePath, FString& OutError)
+bool UTileMapImporterLibrary::BakeTileMapFromFile(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FString& FilePath, bool bMirrorX, FString& OutError)
 {
 	const FString Resolved = ResolveMapPath(FilePath);
 
@@ -248,7 +257,7 @@ bool UTileMapImporterLibrary::BakeTileMapFromFile(UPaperTileMap* TileMap, UPaper
 		return false;
 	}
 
-	return BakeTileMapFromString(TileMap, TileSet, Text, OutError);
+	return BakeTileMapFromString(TileMap, TileSet, Text, bMirrorX, OutError);
 }
 
 FString UTileMapImporterLibrary::ResolveMapPath(const FString& InPath)
