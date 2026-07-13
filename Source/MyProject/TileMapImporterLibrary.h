@@ -29,10 +29,11 @@ class UPaperTileSet;
  * The map/legend are data, so re-painting only needs an edit to the text file
  * plus a re-run of the baker - no recompile.
  *
- * bMirrorX: this level's tile map actor renders horizontally mirrored in-game,
- * so pass true to pre-mirror the bake (place each tile at the mirrored column and
- * set Paper2D's horizontal-flip flag) - the two mirrors cancel and the map reads
- * correctly in the running game.
+ * bMirrorX: pre-mirror the bake (place each tile at the mirrored column and set
+ * Paper2D's horizontal-flip flag). This is a full reflection, so only pass true when
+ * the tile map actor itself renders reflected (negative X scale) - then the two mirrors
+ * cancel. If the actor is not reflected, leave it false; passing true reflects the whole
+ * map and asymmetric tiles (signs, lettering) render backwards.
  */
 UCLASS()
 class MYPROJECT_API UTileMapImporterLibrary : public UBlueprintFunctionLibrary

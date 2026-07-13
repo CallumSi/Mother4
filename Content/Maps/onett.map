@@ -1,52 +1,75 @@
-# Onett - Mother4  (30x24, built from OnettTileset_Reference.md)
+# Onett - Mother4  (32x24, built from OnettTileset_Reference.md)
+# All multi-tile stamps use verified-adjacent tiles (Appendix B). Do NOT hand-pick
+# every-other index for a building - neighbouring tiles only seam one specific way.
 [legend]
+# ---- ground / vegetation (varied so it isn't one flat green) ----
 . = 4        # grass
-T = 183      # tree (border)
-r = 289      # road / pavement
-w = 663      # water
-f = 37       # flowers
+, = 16       # grass (variant)
+: = 9        # grass w/ tuft
+; = 25       # grass w/ tuft (variant)
+* = 37       # flower scatter (overlay - drops on any grass)
+o = 30       # flowerbed left   \ verified pair 30-31
+p = 31       # flowerbed right  /
+
+# ---- water ----
+w = 663      # ocean / pond fill
+
+# ---- road (pavement) ----
+r = 289      # pavement
+
+# ---- street props (single overlay tiles) ----
 m = 310      # mailbox
 s = 312      # stop sign
-x = 316      # manhole (left)
-y = 317      # manhole (mid)
-z = 318      # manhole (right)
-1 = 386      # house roof L
-2 = 388      # house roof M
-3 = 390      # house roof R
-4 = 391      # house wall L (window)
-5 = 432      # house door
-6 = 392      # house wall R (window)
-a = 457      # white bldg 1
-b = 458      # white bldg 2
-c = 459      # white bldg 3
-d = 460      # white bldg 4
-e = 461      # white bldg 5
-g = 462      # white bldg 6
-O = 362      # ONETT sign L
-N = 363      # ONETT sign R
+x = 316      # manhole left   \
+y = 317      # manhole mid     > verified run 316-317-318
+z = 318      # manhole right  /
+O = 362      # ONETT sign left  \ verified pair 362-363
+N = 363      # ONETT sign right /
+
+# ---- trees ----
+T = 183      # canopy         \
+t = 184      # canopy          > verified run 183-184-185
+u = 185      # canopy         /
+V = 192      # tree top       \
+Y = 208      # tree trunk      > verified 3-tall tree 192-208-224
+Z = 224      # tree base      /
+
+# ---- gray civic house: verified 6-wide roof (386-391) over 6-wide wall (402-407) ----
+a = 386      # roof [
+b = 387      # roof
+c = 388      # roof
+d = 389      # roof
+e = 390      # roof
+f = 391      # roof ]
+g = 402      # wall [
+h = 403      # wall
+i = 404      # wall
+j = 405      # wall
+k = 406      # wall
+l = 407      # wall ]
 
 [map]
-TTTTTTTTTTTTTTrrTTTTTTTTTTTTTT
-T.............rr.............T
-T.............ON.............T
-T..ffff.......rr..123...123..T
-T..ffff.......rr.m456..m456..T
-T..ffff.......rr.............T
-T.............rr.............T
-T.............rr.............T
-T.............rr.............T
-T.............rr.............T
-T..abcdeg....srrs............T
-rrrrrrxyzrrrrrrrrrrrrrrrrrrrrr
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-T............srrs............T
-T.............rr........ffff.T
-T..123...123..rr.......fwwww.T
-T..456..m456..rr...m123fwwww.T
-T.............rr....456fwwww.T
-T........ffff.rr.......fwwww.T
-T........ffff.rr........ffff.T
-T........ffff.rr.............T
-T.............rr.............T
-T.............rr.............T
-TTTTTTTTTTTTTTrrTTTTTTTTTTTTTT
+TtuTtuTtuTtuTtuTtuTtuTtuTtuTtuTt
+T..............ON..............T
+T..............rr..............T
+T..abcdef......rr....abcdef....T
+T..ghijkl......rr....ghijkl....T
+T...op...m.....rr......*.......T
+T..............rr....:;........T
+T.....V........rr........V.....T
+T.....Y........rr........Y.....T
+T.....Z........rr........Z.....T
+T.............srrs.............T
+TrrrrrxyzrrrrrrrrrrrrrrrrrrrrrrT
+TrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrT
+T.............srrs.............T
+T...,,.........rr..............T
+T..............rr....wwww......T
+T..............rr....wwww......T
+T..............rr....wwww......T
+T..abcdef......rr..............T
+T..ghijkl......rr..............T
+T........m.....rr....op..*.....T
+T......:;......rr..............T
+T..............rr..............T
+TtuTtuTtuTtuTtuTtuTtuTtuTtuTtuTt

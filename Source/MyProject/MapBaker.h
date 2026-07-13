@@ -37,9 +37,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Map Baker")
 	FString MapFilePath = TEXT("Maps/onett.map");
 
-	/** This level's tile map renders horizontally mirrored in-game; leave ON so the bake is pre-mirrored to compensate. */
+	/**
+	 * Pre-mirror the bake (reverse columns + set each tile's horizontal-flip flag).
+	 * ONLY enable this if the tile map actor itself renders reflected (negative X scale);
+	 * otherwise it reflects the whole map and asymmetric tiles (signs, text) read backwards.
+	 * The Onett map's orientation is a camera rotation, not a reflection, so leave this OFF.
+	 */
 	UPROPERTY(EditAnywhere, Category = "Map Baker")
-	bool bMirrorX = true;
+	bool bMirrorX = false;
 
 	/** Reads MapFilePath and bakes it into TargetTileMap. Remember to save the asset afterwards. */
 	UFUNCTION(CallInEditor, Category = "Map Baker")
