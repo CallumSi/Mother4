@@ -22,7 +22,8 @@ int32 UBakeTileMapCommandlet::Main(const FString& Params)
 	if (MapPath.IsEmpty()) { MapPath = TEXT("Maps/onett.map"); }
 
 	FString TileMapPath = ParamsMap.FindRef(TEXT("tilemap"));
-	if (TileMapPath.IsEmpty()) { TileMapPath = TEXT("/Game/Sprites/Map/OnettTilemap.OnettTilemap"); }
+	// Matches the target the in-editor AMapBaker actor writes into (the "_Text" tile map).
+	if (TileMapPath.IsEmpty()) { TileMapPath = TEXT("/Game/Sprites/Map/OnettTilemap_Text.OnettTilemap_Text"); }
 
 	FString TileSetPath = ParamsMap.FindRef(TEXT("tileset"));
 	if (TileSetPath.IsEmpty()) { TileSetPath = TEXT("/Game/Sprites/Map/tilemap_TileSet.tilemap_TileSet"); }
@@ -40,6 +41,10 @@ int32 UBakeTileMapCommandlet::Main(const FString& Params)
 		UE_LOG(LogBakeTileMap, Warning, TEXT("Could not load tile set: %s (baking without one)"), *TileSetPath);
 	}
 
+	// Default ON to match AMapBaker: the Onett/Mother4 tilemap actor presents its
+	// back face to the camera (rotated 180deg), which mirrors everything - so the
+	// bake must pre-flip tiles or asymmetric art (signs/lettering) reads backwards.
+	// Pass -nomirror only for an actor that shows its front face un-reflected.
 	const bool bMirrorX = !Switches.Contains(TEXT("nomirror"));
 
 	FString Error;
@@ -49,23 +54,35 @@ int32 UBakeTileMapCommandlet::Main(const FString& Params)
 		return 1;
 	}
 
-	UPackage* Package = TileMap->GetOutermost();
-	Package->SetDirtyFlag(true);
-
-	const FString FileName = FPackageName::LongPackageNameToFilename(
-		Package->GetName(), FPackageName::GetAssetPackageExtension());
-
-	FSavePackageArgs SaveArgs;
-	SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-	SaveArgs.SaveFlags = SAVE_NoError;
-
-	const bool bSaved = UPackage::SavePackage(Package, TileMap, *FileName, SaveArgs);
-	if (!bSaved)
+	// The bake writes tiles into the tile MAP and (for 'solid' tiles) collision into
+	// the tile SET, so both packages may be dirty and must be saved.
+	auto SaveAsset = [](UObject* Asset) -> bool
 	{
-		UE_LOG(LogBakeTileMap, Error, TEXT("Bake succeeded but saving the package failed: %s"), *FileName);
+		if (!Asset) { return true; }
+		UPackage* Package = Asset->GetOutermost();
+		Package->SetDirtyFlag(true);
+
+		const FString FileName = FPackageName::LongPackageNameToFilename(
+			Package->GetName(), FPackageName::GetAssetPackageExtension());
+
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		SaveArgs.SaveFlags = SAVE_NoError;
+
+		if (!UPackage::SavePackage(Package, Asset, *FileName, SaveArgs))
+		{
+			UE_LOG(LogBakeTileMap, Error, TEXT("Bake succeeded but saving failed: %s"), *FileName);
+			return false;
+		}
+		UE_LOG(LogBakeTileMap, Display, TEXT("Saved %s"), *FileName);
+		return true;
+	};
+
+	if (!SaveAsset(TileMap) || !SaveAsset(TileSet))
+	{
 		return 1;
 	}
 
-	UE_LOG(LogBakeTileMap, Display, TEXT("Baked '%s' into '%s' and saved %s"), *MapPath, *TileMapPath, *FileName);
+	UE_LOG(LogBakeTileMap, Display, TEXT("Baked '%s' into '%s'"), *MapPath, *TileMapPath);
 	return 0;
 }

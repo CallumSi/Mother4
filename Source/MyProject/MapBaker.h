@@ -39,12 +39,14 @@ public:
 
 	/**
 	 * Pre-mirror the bake (reverse columns + set each tile's horizontal-flip flag).
-	 * ONLY enable this if the tile map actor itself renders reflected (negative X scale);
-	 * otherwise it reflects the whole map and asymmetric tiles (signs, text) read backwards.
-	 * The Onett map's orientation is a camera rotation, not a reflection, so leave this OFF.
+	 * Enable this whenever the tile map actor presents its BACK face to the camera -
+	 * e.g. rotated 180 degrees (yaw) - because a back-face view mirrors everything, so
+	 * asymmetric tiles (signs, lettering) read backwards unless the bake pre-flips them.
+	 * The Onett/Mother4 actor is rotated to show its back face, so it needs this ON.
+	 * Leave OFF only when the actor presents its front face un-reflected.
 	 */
 	UPROPERTY(EditAnywhere, Category = "Map Baker")
-	bool bMirrorX = false;
+	bool bMirrorX = true;
 
 	/** Reads MapFilePath and bakes it into TargetTileMap. Remember to save the asset afterwards. */
 	UFUNCTION(CallInEditor, Category = "Map Baker")

@@ -3,50 +3,51 @@
 # every-other index for a building - neighbouring tiles only seam one specific way.
 [legend]
 # ---- ground / vegetation (varied so it isn't one flat green) ----
-. = 4        # grass
-, = 16       # grass (variant)
-: = 9        # grass w/ tuft
-; = 25       # grass w/ tuft (variant)
-* = 37       # flower scatter (overlay - drops on any grass)
-o = 30       # flowerbed left   \ verified pair 30-31
-p = 31       # flowerbed right  /
+# Ground/walkable tiles go on layer 1 ("Ground") - the floor you stand on.
+. = 4 @ 1 solid  # grass
+, = 16 @ 1 solid  # grass (variant)
+: = 9 @ 1 solid  # grass w/ tuft
+; = 25 @ 1 solid  # grass w/ tuft (variant)
+* = 37 @ 1 solid  # flower scatter (overlay - drops on any grass)
+o = 30 @ 1 solid  # flowerbed left   \ verified pair 30-31
+p = 31 @ 1 solid  # flowerbed right  /
 
 # ---- water ----
-w = 663      # ocean / pond fill
+w = 663 solid  # ocean / pond fill
 
 # ---- road (pavement) ----
-r = 289      # pavement
+r = 289 @ 1 solid  # pavement
 
 # ---- street props (single overlay tiles) ----
-m = 310      # mailbox
-s = 312      # stop sign
-x = 316      # manhole left   \
-y = 317      # manhole mid     > verified run 316-317-318
-z = 318      # manhole right  /
-O = 362      # ONETT sign left  \ verified pair 362-363
-N = 363      # ONETT sign right /
+m = 310 solid  # mailbox
+s = 312 solid  # stop sign
+x = 316 @ 1 solid  # manhole left   \
+y = 317 @ 1 solid  # manhole mid     > verified run 316-317-318
+z = 318 @ 1 solid  # manhole right  /
+O = 362 solid  # ONETT sign left  \ verified pair 362-363
+N = 363 solid  # ONETT sign right /
 
 # ---- trees ----
-T = 183      # canopy         \
-t = 184      # canopy          > verified run 183-184-185
-u = 185      # canopy         /
-V = 192      # tree top       \
-Y = 208      # tree trunk      > verified 3-tall tree 192-208-224
-Z = 224      # tree base      /
+T = 183 solid  # canopy         \
+t = 184 solid  # canopy          > verified run 183-184-185
+u = 185 solid  # canopy         /
+V = 192 solid  # tree top       \
+Y = 208 solid  # tree trunk      > verified 3-tall tree 192-208-224
+Z = 224 solid  # tree base      /
 
 # ---- gray civic house: verified 6-wide roof (386-391) over 6-wide wall (402-407) ----
-a = 386      # roof [
-b = 387      # roof
-c = 388      # roof
-d = 389      # roof
-e = 390      # roof
-f = 391      # roof ]
-g = 402      # wall [
-h = 403      # wall
-i = 404      # wall
-j = 405      # wall
-k = 406      # wall
-l = 407      # wall ]
+a = 386 solid  # roof [
+b = 387 solid  # roof
+c = 388 solid  # roof
+d = 389 solid  # roof
+e = 390 solid  # roof
+f = 391 solid  # roof ]
+g = 402 solid  # wall [
+h = 403 solid  # wall
+i = 404 solid  # wall
+j = 405 solid  # wall
+k = 406 solid  # wall
+l = 407 solid  # wall ]
 
 [map]
 TtuTtuTtuTtuTtuTtuTtuTtuTtuTtuTt

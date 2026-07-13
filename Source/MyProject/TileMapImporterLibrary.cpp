@@ -5,6 +5,7 @@
 #include "PaperTileMap.h"
 #include "PaperTileLayer.h"
 #include "PaperTileSet.h"
+#include "SpriteEditorOnlyTypes.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
@@ -16,6 +17,7 @@ namespace
 	{
 		TMap<TCHAR, int32> SymbolToIndex;
 		TMap<TCHAR, int32> SymbolToLayer;
+		TSet<TCHAR>        SolidSymbols;   // symbols whose tiles get full-tile collision
 		TArray<FString>    Rows;
 	};
 
@@ -60,6 +62,27 @@ namespace
 						Right = Right.Left(Hash).TrimEnd();
 					}
 
+					// Detect (and strip) an optional "solid" flag anywhere in the value,
+					// e.g. "183 solid" or "12 @ 1 solid". Tiles marked solid get full-tile
+					// collision written into the tile set during the bake.
+					bool bSolid = false;
+					{
+						TArray<FString> Tokens;
+						Right.ParseIntoArrayWS(Tokens);
+						FString Rebuilt;
+						for (const FString& Tok : Tokens)
+						{
+							if (Tok.Equals(TEXT("solid"), ESearchCase::IgnoreCase))
+							{
+								bSolid = true;
+								continue;
+							}
+							if (!Rebuilt.IsEmpty()) { Rebuilt += TEXT(" "); }
+							Rebuilt += Tok;
+						}
+						Right = Rebuilt;
+					}
+
 					int32 Layer = 0;
 					FString IndexStr = Right;
 					FString LayerStr;
@@ -73,6 +96,10 @@ namespace
 					const TCHAR Symbol = Left[0];
 					Out.SymbolToIndex.Add(Symbol, FCString::Atoi(*IndexStr));
 					Out.SymbolToLayer.Add(Symbol, Layer);
+					if (bSolid)
+					{
+						Out.SolidSymbols.Add(Symbol);
+					}
 				}
 			}
 			else if (Section == ESection::Map)
@@ -92,6 +119,53 @@ namespace
 		{
 			Out.Rows.Pop();
 		}
+	}
+
+	// Writes a full-tile collision box into every solid tile of the tile set, then
+	// switches the tile map to 3D collision and rebuilds its body setup. Collision in
+	// Paper2D lives on the tile SET (per-tile geometry), not on the placed cells, so
+	// this mutates the tile set asset too - it must be saved alongside the tile map.
+	void ApplyTileCollision(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const TSet<int32>& SolidTileIndices)
+	{
+		const FIntPoint TileSize = TileSet->GetTileSize();
+		const FVector2D BoxSize(TileSize.X, TileSize.Y);
+
+		int32 WithCollision = 0;
+		for (const int32 TileIndex : SolidTileIndices)
+		{
+			FPaperTileMetadata* Meta = TileSet->GetMutableTileMetadata(TileIndex);
+			if (!Meta)
+			{
+				continue;
+			}
+			// Reset first so re-baking replaces (not stacks) the box. Tile geometry is
+			// authored around the tile centre, so a centred box of TileSize covers it.
+			Meta->CollisionData.Reset();
+			Meta->CollisionData.GeometryType = ESpritePolygonMode::FullyCustom;
+			Meta->CollisionData.AddRectangleShape(FVector2D::ZeroVector, BoxSize);
+			++WithCollision;
+		}
+
+		TileSet->MarkPackageDirty();
+#if WITH_EDITOR
+		TileSet->PostEditChange();
+#endif
+
+		// Per-tile geometry is only baked into the body when the map has a collision
+		// domain and each layer is flagged to collide - otherwise it is silently ignored.
+		TileMap->SetCollisionDomain(ESpriteCollisionMode::Use3DPhysics);
+		for (UPaperTileLayer* Layer : TileMap->TileLayers)
+		{
+			if (Layer)
+			{
+				Layer->SetLayerCollides(true);
+			}
+		}
+		TileMap->RebuildCollision();
+
+		UE_LOG(LogTileMapImporter, Display,
+			TEXT("Wrote full-tile collision to %d tile(s) and rebuilt tile map collision. Save the tile SET asset too."),
+			WithCollision);
 	}
 
 	bool ApplyToTileMap(UPaperTileMap* TileMap, UPaperTileSet* TileSet, const FParsedMap& Parsed, bool bMirrorX, FString& OutError)
@@ -195,6 +269,23 @@ namespace
 				}
 				TileMap->TileLayers[Layer]->SetCell(DestX, Y, Info);
 				++TilesPlaced;
+			}
+		}
+
+		// Give every solid-flagged tile full-tile collision (once we know the tile set).
+		if (TileSet)
+		{
+			TSet<int32> SolidTileIndices;
+			for (const TCHAR Sym : Parsed.SolidSymbols)
+			{
+				if (const int32* Idx = Parsed.SymbolToIndex.Find(Sym))
+				{
+					SolidTileIndices.Add(*Idx);
+				}
+			}
+			if (SolidTileIndices.Num() > 0)
+			{
+				ApplyTileCollision(TileMap, TileSet, SolidTileIndices);
 			}
 		}
 

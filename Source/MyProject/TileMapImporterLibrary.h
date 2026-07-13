@@ -17,6 +17,12 @@ class UPaperTileSet;
  *   [legend]
  *   . = 0          # <symbol> = <tile index in the tile set>
  *   T = 12 @ 1     # optional "@ <layer>" puts that symbol on a specific layer (default 0)
+ *   R = 40 solid   # optional "solid" flag gives that tile full-tile collision
+ *
+ * Tiles flagged "solid" get a full-tile collision box written into the tile SET
+ * (collision in Paper2D is per-tile-type, not per-cell), and the tile map is
+ * switched to 3D collision. Because this edits the tile set asset, remember to
+ * save the tile set as well as the tile map after baking.
  *
  *   [map]
  *   TTTTT          # one character per tile; a space leaves the cell empty
